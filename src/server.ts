@@ -21,16 +21,19 @@ app.use(
 
 async function start() {
   try {
-    await mongoose.connect('mongodb://localhost/dbs-project', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+    await mongoose.connect(
+      `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@dbs-cluster-b1vuv.mongodb.net/test?retryWrites=true&w=majority`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }
+    )
 
     app.listen(5000)
 
     log('Connected to DB successfuly')
   } catch (error) {
-    log('Error connection to DB')
+    log(`Error connection to DB: ${error}`)
   }
 }
 
