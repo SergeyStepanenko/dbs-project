@@ -1,4 +1,5 @@
 import { Event, User, Activity } from '../models'
+import { transformEvent } from './transformers'
 
 export async function getEventsById(eventIds: string[]) {
   try {
@@ -20,12 +21,7 @@ export async function getSingleEventById(eventId: string) {
   try {
     const event = (await Event.findById(eventId)) as any
 
-    return {
-      ...event._doc,
-      _id: event.id,
-      activities: getActivitiesById.bind(this, event._doc.activityIdList),
-      creator: getUserById.bind(this, event.creator)
-    }
+    return transformEvent(event)
   } catch (error) {
     throw error
   }

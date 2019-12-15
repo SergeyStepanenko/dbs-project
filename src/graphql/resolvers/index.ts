@@ -1,23 +1,15 @@
 import { Event, User, Activity, Booking } from '../../models'
-import {
-  getUserById,
-  getEventsById,
-  getSingleEventById,
-  getActivitiesById
-} from '../../utils'
-import { IEvent, IUser, IBooking } from '../../types'
+import { getUserById, getSingleEventById } from '../../utils'
+import { transformEvent, transformUser } from '../../utils/transformers'
+import dateToIsoString from '../../utils/dateToIsoString'
+import { IEvent, IUser } from '../../types'
 
 const resolver = {
   events: async () => {
     try {
       const events = await Event.find()
 
-      return events.map((event: any) => ({
-        ...event._doc,
-        _id: event.id,
-        creator: getUserById.bind(this, event._doc.creator),
-        activities: getActivitiesById.bind(this, event._doc.activityIdList)
-      }))
+      return events.map(transformEvent)
     } catch (error) {
       throw error
     }
@@ -38,11 +30,7 @@ const resolver = {
     try {
       const users = await User.find()
 
-      return users.map((user: any) => ({
-        ...user._doc,
-        _id: user.id,
-        createdEvents: getEventsById.bind(this, user._doc.createdEvents)
-      }))
+      return users.map(transformUser)
     } catch (error) {
       throw error
     }
@@ -51,14 +39,16 @@ const resolver = {
     try {
       const bookings = await Booking.find()
 
-      return bookings.map((booking: any) => ({
-        ...booking._doc,
-        _id: booking.id,
-        user: getUserById.bind(this, booking._doc.user),
-        event: getSingleEventById.bind(this, booking._doc.event),
-        createdAt: new Date(booking._doc.createdAt).toISOString(),
-        updatedAt: new Date(booking._doc.updatedAt).toISOString()
-      }))
+      return bookings.map((booking: any) => {
+        return {
+          ...booking._doc,
+          _id: booking.id,
+          user: getUserById.bind(this, booking._doc.user),
+          event: getSingleEventById.bind(this, booking._doc.event),
+          createdAt: dateToIsoString(booking._doc.createdAt),
+          updatedAt: dateToIsoString(booking._doc.updatedAt)
+        }
+      })
     } catch (error) {
       throw error
     }
@@ -87,13 +77,7 @@ const resolver = {
       user.createdEvents.push(result)
       user.save()
 
-      const createdEvent = {
-        ...result._doc,
-        _id: result.id,
-        creator: getUserById.bind(this, result._doc.creator)
-      }
-
-      return createdEvent
+      return transformEvent(result)
     } catch (error) {
       throw error
     }
@@ -144,8 +128,8 @@ const resolver = {
     return {
       ...result._doc,
       _id: result.id,
-      createdAt: new Date(result._doc.createdAt).toISOString(),
-      updatedAt: new Date(result._doc.updatedAt).toISOString()
+      createdAt: dateToIsoString(result._doc.createdAt),
+      updatedAt: dateToIsoString(result._doc.updatedAt)
     }
   },
   cancelBooking: async (args) => {
@@ -156,11 +140,7 @@ const resolver = {
         'event'
       )) as any
 
-      const event = {
-        ...booking.event,
-        _id: booking.event.id,
-        creator: getUserById.bind(this, booking.creator)
-      }
+      const event = transformEvent(booking.event)
 
       await Booking.deleteOne({ _id: bookingId })
 

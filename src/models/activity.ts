@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose'
-import { ESchema } from '../constants'
 
 const activitySchema = new Schema({
   name: {
@@ -16,4 +15,4 @@ const activitySchema = new Schema({
   }
 })
 
-export default mongoose.model(ESchema.Activity, activitySchema)
+export default mongoose.model('Activity', activitySchema)

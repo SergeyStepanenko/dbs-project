@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose'
-import { ESchema } from '../constants'
 
 const eventSchema = new Schema({
   title: {
@@ -20,8 +19,8 @@ const eventSchema = new Schema({
   },
   creator: {
     type: Schema.Types.ObjectId,
-    ref: ESchema.User
+    ref: 'User'
   }
 })
 
-export default mongoose.model(ESchema.Event, eventSchema)
+export default mongoose.model('Event', eventSchema)

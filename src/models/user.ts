@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose'
-import { ESchema } from '../constants'
 
 const userSchema = new Schema({
   email: {
@@ -13,9 +12,9 @@ const userSchema = new Schema({
   createdEvents: [
     {
       type: Schema.Types.ObjectId,
-      ref: ESchema.Event
+      ref: 'Event'
     }
   ]
 })
 
-export default mongoose.model(ESchema.User, userSchema)
+export default mongoose.model('User', userSchema)

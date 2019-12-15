@@ -1,40 +1,46 @@
 import { buildSchema } from 'graphql'
-import { ESchema, EInputs } from '../../constants'
 
 const schema = buildSchema(`
-  type ${ESchema.Event} {
+  type Event {
     _id: ID!
     title: String!
     description: String!
     price: Float!
     date: String!
-    creator: ${ESchema.User}!
-    activities: [${ESchema.Activity}]!
+    creator: User!
+    activities: [Activity]!
   }
 
-  type ${ESchema.User} {
+  type User {
     _id: ID!
     email: String!
     password: String
-    createdEvents: [${ESchema.Event}!]
+    createdEvents: [Event!]
   }
 
-  type ${ESchema.Activity} {
+  type AuthData {
+    userId: ID!
+    email: String!
+    password: String
+    createdEvents: [Event!]
+  }
+
+  type Activity {
     _id: ID!
     name: String!
     description: String!
-    events: [${ESchema.Event}]!
+    events: [Event]!
   }
 
-  type ${ESchema.Booking} {
+  type Booking {
     _id: ID!
-    event: ${ESchema.Event}!
-    user: ${ESchema.User}!
+    event: Event!
+    user: User!
     createdAt: String!
     updatedAt: String!
   }
 
-  input ${EInputs.EventInput} {
+  input EventInput{
     title: String!
     description: String!
     price: Float!
@@ -42,28 +48,28 @@ const schema = buildSchema(`
     userId: String!
   }
 
-  input ${EInputs.UserInput} {
+  input UserInput {
     email: String!
     password: String!
   }
 
-  input ${EInputs.BookingInput} {
+  input BookingInput {
     userId: ID!
     eventId: ID!
   }
 
   type RootQuery {
-    users: [${ESchema.User}!]!
-    events: [${ESchema.Event}!]!
-    activities: [${ESchema.Activity}!]!
-    bookings: [${ESchema.Booking}!]!
+    users: [User!]!
+    events: [Event!]!
+    activities: [Activity!]!
+    bookings: [Booking!]!
   }
 
   type RootMutation {
-    createEvent(eventInput: ${EInputs.EventInput}): ${ESchema.Event}
-    createUser(userInput: ${EInputs.UserInput}): ${ESchema.User}
-    bookEvent(bookingInput: ${EInputs.BookingInput}): ${ESchema.Booking}
-    cancelBooking(bookingInput: ${EInputs.BookingInput}): ${ESchema.Event}
+    createEvent(eventInput: EventInput): Event
+    createUser(userInput: UserInput): User
+    bookEvent(bookingInput: BookingInput): Booking
+    cancelBooking(bookingInput: BookingInput): Event
   }
 
   schema {

@@ -1,22 +1,21 @@
 import mongoose, { Schema } from 'mongoose'
-import { ESchema } from '../constants'
 
 const bookingSchema = new Schema(
   {
     event: [
       {
         type: Schema.Types.ObjectId,
-        ref: ESchema.Event
+        ref: 'Event'
       }
     ],
     user: [
       {
         type: Schema.Types.ObjectId,
-        ref: ESchema.User
+        ref: 'User'
       }
     ]
   },
   { timestamps: true }
 )
 
-export default mongoose.model(ESchema.Booking, bookingSchema)
+export default mongoose.model('Booking', bookingSchema)
