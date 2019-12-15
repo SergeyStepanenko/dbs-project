@@ -6,7 +6,6 @@ import {
   getActivitiesById
 } from '../../utils'
 import { IEvent, IUser, IBooking } from '../../types'
-import { TEMP_USER_ID } from '../../constants'
 
 const resolver = {
   events: async () => {
@@ -66,7 +65,7 @@ const resolver = {
   },
   createEvent: async (args: { eventInput: IEvent }) => {
     const {
-      eventInput: { title, description, price, date }
+      eventInput: { title, description, price, date, userId }
     } = args
 
     const event = new Event({
@@ -74,11 +73,11 @@ const resolver = {
       description,
       price,
       date,
-      creator: TEMP_USER_ID
+      creator: userId
     })
 
     try {
-      const user = (await User.findById(TEMP_USER_ID)) as any
+      const user = (await User.findById(userId)) as any
 
       if (!user) {
         throw new Error(`User not found.`)
@@ -148,6 +147,25 @@ const resolver = {
       createdAt: new Date(result._doc.createdAt).toISOString(),
       updatedAt: new Date(result._doc.updatedAt).toISOString()
     }
+  },
+  cancelBooking: async (args) => {
+    const { bookingId } = args
+
+    try {
+      const booking = (await Booking.findById(bookingId).populate(
+        'event'
+      )) as any
+
+      const event = {
+        ...booking.event,
+        _id: booking.event.id,
+        creator: getUserById.bind(this, booking.creator)
+      }
+
+      await Booking.deleteOne({ _id: bookingId })
+
+      return event
+    } catch (error) {}
   }
 }
 

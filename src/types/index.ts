@@ -3,6 +3,7 @@ export interface IEvent {
   description: string
   price: number
   date: string
+  userId: string
 }
 
 export interface IUser {

@@ -39,6 +39,7 @@ const schema = buildSchema(`
     description: String!
     price: Float!
     date: String!
+    userId: String!
   }
 
   input ${EInputs.UserInput} {
