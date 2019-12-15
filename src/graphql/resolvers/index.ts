@@ -1,10 +1,13 @@
+import { Request } from 'express'
 import { Event, User, Activity, Booking } from '../../models'
 import { getUserById, getSingleEventById } from '../../utils'
-import { transformEvent, transformUser } from '../../utils/transformers'
+import { transformEvent } from '../../utils/transformers'
 import dateToIsoString from '../../utils/dateToIsoString'
-import { IEvent, IUser } from '../../types'
+import userResolver from './user'
+import { IEvent } from '../../types'
 
 const resolver = {
+  ...userResolver,
   events: async () => {
     try {
       const events = await Event.find()
@@ -22,15 +25,6 @@ const resolver = {
         ...event._doc,
         _id: event.id
       }))
-    } catch (error) {
-      throw error
-    }
-  },
-  users: async () => {
-    try {
-      const users = await User.find()
-
-      return users.map(transformUser)
     } catch (error) {
       throw error
     }
@@ -53,7 +47,11 @@ const resolver = {
       throw error
     }
   },
-  createEvent: async (args: { eventInput: IEvent }) => {
+  createEvent: async (args: { eventInput: IEvent }, req: Request) => {
+    // if (!req.isAuth) {
+    //   throw new Error('Unauthenticated!')
+    // }
+
     const {
       eventInput: { title, description, price, date, userId }
     } = args
@@ -78,34 +76,6 @@ const resolver = {
       user.save()
 
       return transformEvent(result)
-    } catch (error) {
-      throw error
-    }
-  },
-  createUser: async (args: { userInput: IUser }) => {
-    const {
-      userInput: { email, password }
-    } = args
-
-    try {
-      const user = await User.findOne({ email })
-
-      if (user) {
-        throw new Error(`User with email: ${email} exists already.`)
-      }
-    } catch (error) {
-      throw error
-    }
-
-    const user = new User({
-      email,
-      password
-    })
-
-    try {
-      const result = (await user.save()) as any
-
-      return { ...result._doc, _id: result.id }
     } catch (error) {
       throw error
     }

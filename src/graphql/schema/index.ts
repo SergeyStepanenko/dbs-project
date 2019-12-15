@@ -13,6 +13,7 @@ const schema = buildSchema(`
 
   type User {
     _id: ID!
+    name: String!
     email: String!
     password: String
     createdEvents: [Event!]
@@ -20,9 +21,8 @@ const schema = buildSchema(`
 
   type AuthData {
     userId: ID!
-    email: String!
-    password: String
-    createdEvents: [Event!]
+    token: String!
+    tokenExpiration: Int!
   }
 
   type Activity {
@@ -49,6 +49,7 @@ const schema = buildSchema(`
   }
 
   input UserInput {
+    name: String!
     email: String!
     password: String!
   }
@@ -63,6 +64,7 @@ const schema = buildSchema(`
     events: [Event!]!
     activities: [Activity!]!
     bookings: [Booking!]!
+    login(email: String!, password: String!): AuthData!
   }
 
   type RootMutation {

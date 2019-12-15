@@ -5,10 +5,13 @@ import mongoose from 'mongoose'
 
 import graphQlSchema from './graphql/schema'
 import graphQlResolver from './graphql/resolvers'
+import { isAuth } from './middlewares/isAuth'
 import { log } from './utils'
 
 const app = express()
 app.use(bodyParser.json())
+
+app.use(isAuth)
 
 app.use(
   '/graphql',
@@ -28,7 +31,9 @@ async function start() {
 
     app.listen(5000)
 
-    log('Connected to DB successfuly')
+    log(
+      `Connected to DB successfuly\n port: 5000 \n grapiQL: http://localhost:5000/graphql`
+    )
   } catch (error) {
     log(`Error connection to DB: ${error}`)
   }
