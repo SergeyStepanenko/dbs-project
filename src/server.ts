@@ -9,12 +9,11 @@ import { isAuth } from './middlewares/isAuth'
 import { log } from './utils'
 
 const app = express()
-app.use(bodyParser.json())
-
-app.use(isAuth)
 
 app.use(
   '/graphql',
+  bodyParser.json(),
+  isAuth,
   graphqlHttp({
     schema: graphQlSchema,
     rootValue: graphQlResolver,
