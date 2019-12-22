@@ -2,9 +2,11 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import graphqlHttp from 'express-graphql'
 import mongoose from 'mongoose'
+import fileUpload from 'express-fileupload'
 
 import graphQlSchema from './graphql/schema'
 import graphQlResolver from './graphql/resolvers'
+import imageUploadMethod from './rest/imageUpload'
 import { isAuth } from './middlewares/isAuth'
 import { log } from './utils'
 
@@ -20,6 +22,10 @@ app.use(
     graphiql: true
   })
 )
+
+app.use(fileUpload({ createParentPath: true }))
+
+imageUploadMethod(app)
 
 async function start() {
   try {
