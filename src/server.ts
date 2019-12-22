@@ -27,6 +27,8 @@ app.use(fileUpload({ createParentPath: true }))
 
 imageUploadMethod(app)
 
+app.use('/files', express.static(`${process.cwd()}/files`))
+
 async function start() {
   try {
     await mongoose.connect('mongodb://localhost/dbs-project', {
