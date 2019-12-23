@@ -4,10 +4,12 @@ import { getUserById, getSingleEventById } from '../../utils'
 import { transformEvent } from '../../utils/transformers'
 import dateToIsoString from '../../utils/dateToIsoString'
 import userResolver from './user'
+import productResolver from './product'
 import { IEvent } from '../../types'
 
 const resolver = {
   ...userResolver,
+  ...productResolver,
   events: async () => {
     try {
       const events = await Event.find()

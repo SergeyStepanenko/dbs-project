@@ -16,3 +16,10 @@ export function transformUser(user) {
     createdEvents: getEventsById.bind(this, user._doc.createdEvents)
   }
 }
+
+export function transformProduct(product) {
+  return {
+    ...product._doc,
+    id: product.id
+  }
+}

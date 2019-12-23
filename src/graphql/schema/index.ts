@@ -40,7 +40,15 @@ const schema = buildSchema(`
     updatedAt: String!
   }
 
-  input EventInput{
+  type Product {
+    id: ID!
+    title: String!
+    description: String!
+    price: Int!
+    images: [String!]!
+  }
+
+  input EventInput {
     title: String!
     description: String!
     price: Float!
@@ -59,12 +67,20 @@ const schema = buildSchema(`
     eventId: ID!
   }
 
+  input ProductInput {
+    title: String!
+    description: String!
+    price: Int!
+    images: [String!]!
+  }
+
   type RootQuery {
     users: [User!]!
     events: [Event!]!
     activities: [Activity!]!
     bookings: [Booking!]!
     login(email: String!, password: String!): AuthData!
+    products: [Product!]!
   }
 
   type RootMutation {
@@ -72,6 +88,7 @@ const schema = buildSchema(`
     createUser(userInput: UserInput): User
     bookEvent(bookingInput: BookingInput): Booking
     cancelBooking(bookingInput: BookingInput): Event
+    productCreate(productInput: ProductInput): Product
   }
 
   schema {
