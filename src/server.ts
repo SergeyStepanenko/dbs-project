@@ -1,31 +1,44 @@
 import express from 'express'
+import cors from 'cors'
 import bodyParser from 'body-parser'
+import { printSchema } from 'graphql'
 import graphqlHttp from 'express-graphql'
 import mongoose from 'mongoose'
 import fileUpload from 'express-fileupload'
 
 import graphQlSchema from './graphql/schema'
-import graphQlResolver from './graphql/resolvers'
-import imageUploadMethod from './rest/imageUpload'
-import { isAuth } from './middlewares/isAuth'
-import { log } from './utils'
+import setupImageUpload from './rest/setupImageUpload'
+import { setupPassportAuth, onlyAuthorized } from './authenticate'
+import graphqlSchema from './graphql/schema'
+;(mongoose as any).Promise = global.Promise
 
 const app = express()
 
+const DEBUG_MODE = true
+
+app.use(bodyParser.json())
+
 app.use(
   '/graphql',
-  bodyParser.json(),
-  isAuth,
+  cors(),
   graphqlHttp({
     schema: graphQlSchema,
-    rootValue: graphQlResolver,
     graphiql: true
   })
 )
 
-app.use(fileUpload({ createParentPath: true }))
+if (!DEBUG_MODE) {
+  app.use(onlyAuthorized())
+}
 
-imageUploadMethod(app)
+app.use('/schema', onlyAuthorized(), (req, res, _next) => {
+  res.set('Content-Type', 'text/plain')
+  res.send(printSchema(graphqlSchema))
+})
+
+app.use(fileUpload({ createParentPath: true }))
+setupImageUpload(app)
+setupPassportAuth(app, DEBUG_MODE)
 
 async function start() {
   try {
@@ -36,11 +49,11 @@ async function start() {
 
     app.listen(5000)
 
-    log(
-      `Connected to DB successfuly\n port: 5000 \n grapiQL: http://localhost:5000/graphql`
+    console.log(
+      `Connected to DB successfuly\nport: 5000 \ngrapiQL: http://localhost:5000/graphql`
     )
   } catch (error) {
-    log(`Error connection to DB: ${error}`)
+    console.log(`Error connection to DB: ${error}`)
   }
 }
 
