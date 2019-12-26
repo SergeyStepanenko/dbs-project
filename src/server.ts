@@ -16,7 +16,19 @@ const app = express()
 
 const DEBUG_MODE = true
 
+// Express morgan logs
+// app.use(morgan("combined"));
+
+// Parse application/x-www-form-urlencoded
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+)
+
 app.use(bodyParser.json())
+
+setupPassportAuth(app, DEBUG_MODE)
 
 app.use(
   '/graphql',
@@ -38,7 +50,6 @@ app.use('/schema', onlyAuthorized(), (req, res, _next) => {
 
 app.use(fileUpload({ createParentPath: true }))
 setupImageUpload(app)
-setupPassportAuth(app, DEBUG_MODE)
 
 async function start() {
   try {
@@ -50,7 +61,7 @@ async function start() {
     app.listen(5000)
 
     console.log(
-      `Connected to DB successfuly\nport: 5000 \ngrapiQL: http://localhost:5000/graphql`
+      `Connected to DB successfuly\nport: 5000\ngrapiQL: http://localhost:5000/graphql`
     )
   } catch (error) {
     console.log(`Error connection to DB: ${error}`)
