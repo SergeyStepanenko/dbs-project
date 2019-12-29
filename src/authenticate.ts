@@ -111,40 +111,40 @@ export function setupPassportAuth(app: Application, addDebugRoutes = false) {
     })
   }
 
-  app.post('/login', async (req, res, next) => {
-    try {
-      const { username, password } = req.body || {}
+  // app.post('/login', async (req, res, next) => {
+  //   try {
+  //     const { username, password } = req.body || {}
 
-      if (!username || !password) {
-        throw new Error('Username or password not set in the request')
-      }
+  //     if (!username || !password) {
+  //       throw new Error('Username or password not set in the request')
+  //     }
 
-      // Get user by username
-      const user = await getUserByUsername(username)
+  //     // Get user by username
+  //     const user = await getUserByUsername(username)
 
-      if (!user) {
-        throw new Error(`User for "${username}" could not be found`)
-      }
+  //     if (!user) {
+  //       throw new Error(`User for "${username}" could not be found`)
+  //     }
 
-      // Check user password using custom method in Mongooose UserModel Schema methods
-      if (!(await user.comparePassword(password))) {
-        throw new Error('User password is not correct')
-      }
+  //     // Check user password using custom method in Mongooose UserModel Schema methods
+  //     if (!(await user.comparePassword(password))) {
+  //       throw new Error('User password is not correct')
+  //     }
 
-      const jwtPayload: JwtPayload = {
-        userId: user._id.toString()
-      }
+  //     const jwtPayload: JwtPayload = {
+  //       userId: user._id.toString()
+  //     }
 
-      // Return a sign token containing the user ID (JwtPayload)
-      const token = jwt.sign(jwtPayload, jwtOptions.secretOrKey)
+  //     // Return a sign token containing the user ID (JwtPayload)
+  //     const token = jwt.sign(jwtPayload, jwtOptions.secretOrKey)
 
-      res.json({ token })
-    } catch (error) {
-      res.json({
-        error: error.message
-      })
-    }
-  })
+  //     res.json({ token })
+  //   } catch (error) {
+  //     res.json({
+  //       error: error.message
+  //     })
+  //   }
+  // })
 
   app.get('/logout', (req, res) => {
     req.logout()

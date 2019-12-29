@@ -15,6 +15,7 @@ import {
   getUserByUsername,
   addUser
 } from '../../db/users'
+import { login, IUser } from '../resolvers'
 
 const userType = new GraphQLObjectType({
   name: 'User',
@@ -27,6 +28,17 @@ const userType = new GraphQLObjectType({
     password: {
       type: GraphQLString,
       description: 'The password'
+    }
+  })
+})
+
+const tokenType = new GraphQLObjectType({
+  name: 'Token',
+  description: 'JWT Token',
+  fields: () => ({
+    token: {
+      type: GraphQLString,
+      description: 'JWT Token'
     }
   })
 })
@@ -66,6 +78,20 @@ const mutation = {
       }
     },
     resolve: (obj, input) => addUser(input)
+  },
+  login: {
+    type: tokenType,
+    args: {
+      username: {
+        type: new GraphQLNonNull(GraphQLString)
+      },
+      password: {
+        type: new GraphQLNonNull(GraphQLString)
+      }
+    },
+    resolve: (_, input: IUser) => {
+      return login(input)
+    }
   }
 }
 
